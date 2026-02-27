@@ -85,12 +85,6 @@ function generateTextCaptcha() {
   return value;
 }
 
-function generateMathCaptcha() {
-  const a = Math.floor(Math.random() * 9) + 1;
-  const b = Math.floor(Math.random() * 9) + 1;
-  return { text: `${a} + ${b}`, value: String(a + b) };
-}
-
 function buildCaptchaSvg(text) {
   const wobble = Math.floor(Math.random() * 6) - 3;
   return `
@@ -104,20 +98,8 @@ function buildCaptchaSvg(text) {
 }
 
 function refreshCaptcha() {
-  const useMath = Math.random() > 0.6;
-  let value = "";
-  let text = "";
-
-  if (useMath) {
-    const math = generateMathCaptcha();
-    value = math.value;
-    text = math.text;
-  } else {
-    text = generateTextCaptcha();
-    value = text;
-  }
-
-  state.captchaValue = value;
+  const text = generateTextCaptcha();
+  state.captchaValue = text;
   elements.captchaImage.innerHTML = buildCaptchaSvg(text);
 }
 
