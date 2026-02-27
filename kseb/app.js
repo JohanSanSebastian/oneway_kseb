@@ -19,7 +19,6 @@ const elements = {
   result: document.getElementById("result"),
   overlay: document.getElementById("overlay"),
   consumerNumber: document.getElementById("consumerNumber"),
-  section: document.getElementById("section"),
   captchaValue: document.getElementById("captchaValue"),
   captchaImage: document.getElementById("captcha-image"),
   refreshCaptcha: document.getElementById("refresh-captcha"),
@@ -103,22 +102,9 @@ function refreshCaptcha() {
   elements.captchaImage.innerHTML = buildCaptchaSvg(text);
 }
 
-function loadSections() {
-  const sections = Array.from(
-    new Set(state.consumers.map((consumer) => consumer.section))
-  ).sort();
-  elements.section.innerHTML = '<option value="">Select Section</option>';
-  sections.forEach((section) => {
-    const option = document.createElement("option");
-    option.value = section;
-    option.textContent = section;
-    elements.section.appendChild(option);
-  });
-}
-
-function findConsumer(consumerNumber, section) {
+function findConsumer(consumerNumber) {
   return state.consumers.find(
-    (item) => item.consumerNumber === consumerNumber && item.section === section
+    (item) => item.consumerNumber === consumerNumber
   );
 }
 
@@ -126,7 +112,6 @@ async function loadConsumers() {
   const response = await fetch("./data/consumers.json");
   const data = await response.json();
   state.consumers = data;
-  loadSections();
 }
 
 function selectBill(billId) {
@@ -191,10 +176,6 @@ function renderBillDetails() {
       <span>Penalty</span>
       <strong>${formatMoney(bill.penalty)}</strong>
     </div>
-    <div>
-      <span>Section</span>
-      <strong>${state.consumer.section}</strong>
-    </div>
   `;
 
   elements.billStatus.className = `status ${bill.status.toLowerCase()}`;
@@ -216,7 +197,6 @@ function resetFlow() {
   state.selectedBillId = "";
   state.paymentStatus = null;
   elements.consumerNumber.value = "";
-  elements.section.value = "";
   elements.captchaValue.value = "";
   elements.vpa.value = "";
   showError(elements.landingError, "");
@@ -230,16 +210,10 @@ async function handleFetchBill(event) {
   showError(elements.landingError, "");
 
   const consumerNumber = elements.consumerNumber.value.trim();
-  const section = elements.section.value;
   const captchaValue = elements.captchaValue.value.trim();
 
   if (consumerNumber.length !== 13) {
     showError(elements.landingError, "Consumer Number must be 13 digits.");
-    return;
-  }
-
-  if (!section) {
-    showError(elements.landingError, "Please select a Section Office.");
     return;
   }
 
@@ -254,10 +228,10 @@ async function handleFetchBill(event) {
     return;
   }
 
-  const consumer = findConsumer(consumerNumber, section);
+  const consumer = findConsumer(consumerNumber);
 
   if (!consumer) {
-    showError(elements.landingError, "Invalid Consumer Number or Section Office.");
+    showError(elements.landingError, "Invalid Consumer Number.");
     refreshCaptcha();
     return;
   }
