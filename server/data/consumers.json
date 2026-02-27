@@ -1,0 +1,68 @@
+[
+  {
+    "consumerNumber": "1234567890123",
+    "section": "Trivandrum North",
+    "name": "Anitha Varma",
+    "address": "Kowdiar, Thiruvananthapuram",
+    "bills": [
+      {
+        "id": "BILL-2026-02-TRV-01",
+        "billAmount": 1450.75,
+        "dueDate": "2026-03-10",
+        "penalty": 25,
+        "status": "PAID"
+      },
+      {
+        "id": "BILL-2026-03-TRV-02",
+        "billAmount": 1620.3,
+        "dueDate": "2026-04-10",
+        "penalty": 0,
+        "status": "PENDING"
+      }
+    ]
+  },
+  {
+    "consumerNumber": "2223334445556",
+    "section": "Ernakulam Central",
+    "name": "Rahul Menon",
+    "address": "MG Road, Kochi",
+    "bills": [
+      {
+        "id": "BILL-2026-01-ERN-09",
+        "billAmount": 920.5,
+        "dueDate": "2026-03-05",
+        "penalty": 0,
+        "status": "PAID"
+      },
+      {
+        "id": "BILL-2026-02-ERN-12",
+        "billAmount": 1105.4,
+        "dueDate": "2026-03-20",
+        "penalty": 15,
+        "status": "PAID"
+      }
+    ]
+  },
+  {
+    "consumerNumber": "9876543210987",
+    "section": "Kozhikode East",
+    "name": "Zara Nair",
+    "address": "East Nadakkavu, Kozhikode",
+    "bills": [
+      {
+        "id": "BILL-2026-02-KKD-07",
+        "billAmount": 1785.2,
+        "dueDate": "2026-03-12",
+        "penalty": 40,
+        "status": "PENDING"
+      },
+      {
+        "id": "BILL-2026-01-KKD-03",
+        "billAmount": 1340.9,
+        "dueDate": "2026-02-15",
+        "penalty": 0,
+        "status": "PAID"
+      }
+    ]
+  }
+]
