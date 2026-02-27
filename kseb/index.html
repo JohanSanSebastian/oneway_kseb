@@ -140,9 +140,16 @@
           </div>
 
           <div class="gateway">
-            <div class="qr">
+            <div
+              id="qr-simulate"
+              class="qr"
+              role="button"
+              tabindex="0"
+              aria-label="Simulate UPI QR scan"
+            >
               <img class="qr-image" src="./upi-qr.png" alt="UPI QR" />
               <p id="qr-label" class="muted"></p>
+              <span class="scan-hint">Tap QR to simulate UPI scan</span>
             </div>
             <div class="gateway-form">
               <label>
@@ -183,7 +190,7 @@
         </section>
       </main>
 
-      <div id="overlay" class="overlay hidden">
+      <div id="overlay" class="overlay hidden" hidden>
         <div class="loader">
           <div class="spinner"></div>
           <p>Processing UPI transaction...</p>

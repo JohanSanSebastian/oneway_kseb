@@ -107,7 +107,110 @@
               <strong id="bill-status"></strong>
             </div>
           </div>
+          <div class="bill-actions">
+            <button id="pay-button" type="button" class="pay" disabled>
+              Pay via UPI
+            </button>
+            <button id="new-search" type="button" class="ghost">
+              New Search
+            </button>
+          </div>
         </section>
+
+        <section id="gateway" class="card wide hidden">
+          <div class="card-header">
+            <div class="icon">U</div>
+            <div>
+              <h2>UPI Gateway</h2>
+              <p id="gateway-amount"></p>
+            </div>
+          </div>
+          <div class="gateway-grid">
+            <div
+              id="qr-simulate"
+              class="qr-card"
+              role="button"
+              tabindex="0"
+              aria-label="Simulate UPI QR scan"
+            >
+              <svg
+                class="qr-image"
+                viewBox="0 0 120 120"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <rect width="120" height="120" fill="#ffffff" />
+                <rect x="8" y="8" width="28" height="28" fill="#1a1a1a" />
+                <rect x="84" y="8" width="28" height="28" fill="#1a1a1a" />
+                <rect x="8" y="84" width="28" height="28" fill="#1a1a1a" />
+                <rect x="18" y="18" width="8" height="8" fill="#ffffff" />
+                <rect x="94" y="18" width="8" height="8" fill="#ffffff" />
+                <rect x="18" y="94" width="8" height="8" fill="#ffffff" />
+                <rect x="46" y="16" width="8" height="8" fill="#1a1a1a" />
+                <rect x="60" y="26" width="8" height="8" fill="#1a1a1a" />
+                <rect x="46" y="38" width="10" height="10" fill="#1a1a1a" />
+                <rect x="64" y="48" width="10" height="10" fill="#1a1a1a" />
+                <rect x="38" y="60" width="8" height="8" fill="#1a1a1a" />
+                <rect x="52" y="70" width="12" height="12" fill="#1a1a1a" />
+                <rect x="72" y="66" width="8" height="8" fill="#1a1a1a" />
+                <rect x="60" y="90" width="10" height="10" fill="#1a1a1a" />
+                <rect x="78" y="86" width="6" height="6" fill="#1a1a1a" />
+              </svg>
+              <p id="qr-label" class="muted"></p>
+              <span class="scan-hint">Tap QR to simulate UPI scan</span>
+            </div>
+            <div class="gateway-form">
+              <label class="material-input">
+                <span>Enter UPI ID</span>
+                <input id="vpa" placeholder="success@upi or fail@upi" />
+              </label>
+              <p id="gateway-error" class="error hidden"></p>
+              <div class="button-row">
+                <button id="confirm-pay" type="button" class="pay">
+                  Confirm Payment
+                </button>
+                <button id="back-to-bill" type="button" class="ghost">
+                  Back to Bill
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="result" class="card wide hidden">
+          <div class="result-box">
+            <h2 id="result-title"></h2>
+            <p id="result-message"></p>
+          </div>
+          <div class="result-details">
+            <div>
+              <span>Consumer Number</span>
+              <strong id="result-consumer"></strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong id="result-status"></strong>
+            </div>
+            <div>
+              <span>Payment Method</span>
+              <strong>UPI Sandbox</strong>
+            </div>
+            <div>
+              <span>Reference</span>
+              <strong id="result-ref"></strong>
+            </div>
+          </div>
+          <button id="result-new-search" type="button" class="pay">
+            Start New Search
+          </button>
+        </section>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay hidden" hidden>
+      <div class="loader">
+        <div class="spinner"></div>
+        <p>Processing UPI transaction...</p>
       </div>
     </div>
 

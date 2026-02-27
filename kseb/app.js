@@ -34,6 +34,7 @@ const elements = {
   payButton: document.getElementById("pay-button"),
   newSearch: document.getElementById("new-search"),
   gatewayAmount: document.getElementById("gateway-amount"),
+  qrSimulate: document.getElementById("qr-simulate"),
   qrLabel: document.getElementById("qr-label"),
   vpa: document.getElementById("vpa"),
   gatewayError: document.getElementById("gateway-error"),
@@ -67,6 +68,7 @@ function showSection(section) {
 function setOverlayVisible(isVisible) {
   state.isProcessing = Boolean(isVisible);
   elements.overlay.classList.toggle("hidden", !state.isProcessing);
+  elements.overlay.hidden = !state.isProcessing;
 }
 
 function showError(element, message) {
@@ -297,6 +299,7 @@ async function handleFetchBill(event) {
 }
 
 async function handlePay() {
+  if (state.isProcessing) return;
   showError(elements.gatewayError, "");
   const vpa = elements.vpa.value.trim();
   const bill = getSelectedBill();
@@ -345,6 +348,11 @@ async function handlePay() {
   showSection(elements.result);
 }
 
+function handleQrSimulate() {
+  elements.vpa.value = "success@upi";
+  handlePay();
+}
+
 function setupEvents() {
   elements.billForm.addEventListener("submit", handleFetchBill);
   elements.refreshCaptcha.addEventListener("click", refreshCaptcha);
@@ -356,6 +364,13 @@ function setupEvents() {
   });
   elements.backToBill.addEventListener("click", () => showSection(elements.billView));
   elements.confirmPay.addEventListener("click", handlePay);
+  elements.qrSimulate.addEventListener("click", handleQrSimulate);
+  elements.qrSimulate.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleQrSimulate();
+    }
+  });
 }
 
 loadConsumers().then(() => {

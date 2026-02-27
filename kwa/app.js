@@ -10,16 +10,61 @@ const elements = {
   billNumber: document.getElementById("bill-number"),
   billAmount: document.getElementById("bill-amount"),
   billDate: document.getElementById("bill-date"),
-  billStatus: document.getElementById("bill-status")
+  billStatus: document.getElementById("bill-status"),
+  payButton: document.getElementById("pay-button"),
+  newSearch: document.getElementById("new-search"),
+  gateway: document.getElementById("gateway"),
+  gatewayAmount: document.getElementById("gateway-amount"),
+  qrLabel: document.getElementById("qr-label"),
+  qrSimulate: document.getElementById("qr-simulate"),
+  vpa: document.getElementById("vpa"),
+  gatewayError: document.getElementById("gateway-error"),
+  confirmPay: document.getElementById("confirm-pay"),
+  backToBill: document.getElementById("back-to-bill"),
+  result: document.getElementById("result"),
+  resultTitle: document.getElementById("result-title"),
+  resultMessage: document.getElementById("result-message"),
+  resultConsumer: document.getElementById("result-consumer"),
+  resultStatus: document.getElementById("result-status"),
+  resultRef: document.getElementById("result-ref"),
+  resultNewSearch: document.getElementById("result-new-search"),
+  overlay: document.getElementById("overlay")
 };
 
 const state = {
-  consumers: []
+  consumers: [],
+  consumer: null,
+  selectedBillId: "",
+  isProcessing: false
 };
+
+const statusLabels = {
+  PENDING: "Bill Pending",
+  PAID: "Bill Paid"
+};
+
+function formatMoney(amount) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2
+  }).format(amount || 0);
+}
 
 function showError(message) {
   elements.error.textContent = message;
   elements.error.classList.toggle("hidden", !message);
+}
+
+function showGatewayError(message) {
+  elements.gatewayError.textContent = message;
+  elements.gatewayError.classList.toggle("hidden", !message);
+}
+
+function setOverlayVisible(isVisible) {
+  state.isProcessing = Boolean(isVisible);
+  elements.overlay.classList.toggle("hidden", !state.isProcessing);
+  elements.overlay.hidden = !state.isProcessing;
 }
 
 function updateProceedState() {
@@ -28,11 +73,45 @@ function updateProceedState() {
   elements.proceed.disabled = !hasInput;
 }
 
+function getSelectedBill() {
+  if (!state.consumer) return null;
+  return (
+    state.consumer.bills.find((bill) => bill.id === state.selectedBillId) || null
+  );
+}
+
+function renderBill() {
+  const bill = getSelectedBill();
+  if (!state.consumer || !bill) return;
+
+  elements.billName.textContent = state.consumer.name;
+  elements.billNumber.textContent = state.consumer.consumerNumber;
+  elements.billAmount.textContent = formatMoney(bill.billAmount);
+  elements.billDate.textContent = bill.dueDate;
+  elements.billStatus.textContent = statusLabels[bill.status] || bill.status;
+  elements.payButton.disabled = bill.status === "PAID";
+}
+
+function updateGateway() {
+  const bill = getSelectedBill();
+  if (!bill) return;
+  elements.gatewayAmount.textContent = `Pay ${formatMoney(bill.billAmount)}`;
+  elements.qrLabel.textContent = `upi://pay?pa=kwa@upi&pn=KWA&am=${bill.billAmount}`;
+  elements.vpa.value = "";
+  showGatewayError("");
+}
+
 function resetForm() {
   elements.consumerNumber.value = "";
   elements.phone.value = "";
   showError("");
+  showGatewayError("");
   elements.billCard.classList.add("hidden");
+  elements.gateway.classList.add("hidden");
+  elements.result.classList.add("hidden");
+  elements.payButton.disabled = true;
+  state.consumer = null;
+  state.selectedBillId = "";
   updateProceedState();
 }
 
@@ -61,6 +140,8 @@ async function handleSubmit(event) {
     if (!consumer) {
       showError("No matching account found.");
       elements.billCard.classList.add("hidden");
+      elements.gateway.classList.add("hidden");
+      elements.result.classList.add("hidden");
       return;
     }
 
@@ -68,18 +149,77 @@ async function handleSubmit(event) {
       consumer.bills.find((item) => item.status === "PENDING") ||
       consumer.bills[0];
 
-    elements.billName.textContent = consumer.name;
-    elements.billNumber.textContent = consumer.consumerNumber;
-    elements.billAmount.textContent = `INR ${bill.billAmount.toFixed(2)}`;
-    elements.billDate.textContent = bill.dueDate;
-    elements.billStatus.textContent = bill.status;
+    state.consumer = consumer;
+    state.selectedBillId = bill.id;
+    renderBill();
     elements.billCard.classList.remove("hidden");
+    elements.gateway.classList.add("hidden");
+    elements.result.classList.add("hidden");
   } catch (err) {
     showError("Unable to reach the server.");
   } finally {
     elements.proceed.textContent = "Proceed";
     updateProceedState();
   }
+}
+
+function showGateway() {
+  updateGateway();
+  elements.gateway.classList.remove("hidden");
+  elements.result.classList.add("hidden");
+}
+
+async function handlePay() {
+  if (state.isProcessing) return;
+  showGatewayError("");
+
+  const vpa = elements.vpa.value.trim();
+  const bill = getSelectedBill();
+
+  if (!vpa) {
+    showGatewayError("Enter a UPI ID to proceed.");
+    return;
+  }
+
+  if (!bill || !state.consumer) {
+    showGatewayError("No bill selected.");
+    return;
+  }
+
+  setOverlayVisible(true);
+  await new Promise((resolve) => setTimeout(resolve, 2800));
+
+  const isFailure = vpa.toLowerCase().includes("fail");
+  const isSuccess = vpa.toLowerCase().includes("success") || !isFailure;
+  const data = isSuccess
+    ? { status: "SUCCESS", message: "Payment captured. Your bill is marked as paid." }
+    : { status: "FAILURE", message: "UPI authorization failed. Please try again." };
+
+  setOverlayVisible(false);
+
+  if (data.status === "SUCCESS") {
+    state.consumer.bills = state.consumer.bills.map((item) =>
+      item.id === bill.id ? { ...item, status: "PAID" } : item
+    );
+  }
+
+  renderBill();
+  elements.resultTitle.textContent =
+    data.status === "SUCCESS" ? "Payment Successful" : "Payment Failed";
+  elements.resultMessage.textContent = data.message || "";
+  elements.resultConsumer.textContent = state.consumer.consumerNumber;
+  const updatedBill = getSelectedBill();
+  elements.resultStatus.textContent =
+    statusLabels[updatedBill?.status] || updatedBill?.status || "";
+  elements.resultRef.textContent = `TXN-${Date.now().toString().slice(-6)}`;
+
+  elements.result.classList.remove("hidden");
+  elements.gateway.classList.add("hidden");
+}
+
+function handleQrSimulate() {
+  elements.vpa.value = "success@upi";
+  handlePay();
 }
 
 async function loadConsumers() {
@@ -93,4 +233,18 @@ loadConsumers().then(() => {
   elements.phone.addEventListener("input", updateProceedState);
   elements.form.addEventListener("submit", handleSubmit);
   elements.reset.addEventListener("click", resetForm);
+  elements.newSearch.addEventListener("click", resetForm);
+  elements.payButton.addEventListener("click", showGateway);
+  elements.backToBill.addEventListener("click", () => {
+    elements.gateway.classList.add("hidden");
+  });
+  elements.confirmPay.addEventListener("click", handlePay);
+  elements.resultNewSearch.addEventListener("click", resetForm);
+  elements.qrSimulate.addEventListener("click", handleQrSimulate);
+  elements.qrSimulate.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleQrSimulate();
+    }
+  });
 });
