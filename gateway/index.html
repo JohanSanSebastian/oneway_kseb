@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Payment Gateway - UPI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="gateway-page">
+      <header class="gateway-header">
+        <div class="header-content">
+          <div class="secure-badge">
+            <span class="lock-icon">🔒</span>
+            <span>Secure Payment</span>
+          </div>
+          <div class="bank-logo">
+            <div class="logo-mark">UPI</div>
+            <span>Unified Payments Interface</span>
+          </div>
+          <div class="npci-badge">
+            <span>Powered by NPCI</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="gateway-main">
+        <div class="payment-card">
+          <div class="merchant-info">
+            <div class="merchant-icon" id="merchant-icon">M</div>
+            <div class="merchant-details">
+              <h2 id="merchant-name">Merchant Name</h2>
+              <p id="merchant-desc">Payment for services</p>
+            </div>
+          </div>
+
+          <div class="amount-display">
+            <span class="amount-label">Amount to Pay</span>
+            <span class="amount-value" id="amount-value">₹0.00</span>
+          </div>
+
+          <div class="transaction-info">
+            <div class="info-row">
+              <span>Transaction ID</span>
+              <strong id="txn-id">TXN-000000</strong>
+            </div>
+            <div class="info-row">
+              <span>Reference</span>
+              <strong id="ref-id">REF-000000</strong>
+            </div>
+          </div>
+
+          <div class="payment-methods">
+            <div class="method-tabs">
+              <button class="method-tab active" data-method="upi">UPI</button>
+              <button class="method-tab" data-method="card" disabled>Card</button>
+              <button class="method-tab" data-method="netbanking" disabled>Net Banking</button>
+            </div>
+
+            <div class="upi-section">
+              <div class="qr-container">
+                <div
+                  id="qr-simulate"
+                  class="qr-wrapper"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Simulate UPI QR scan"
+                >
+                  <img class="qr-code" src="./upi-qr.png" alt="UPI QR Code" />
+                  <p class="qr-hint">Scan with any UPI app</p>
+                  <span class="simulate-hint">Tap to simulate scan</span>
+                </div>
+                <div class="upi-apps">
+                  <span class="app-icon">G</span>
+                  <span class="app-icon">P</span>
+                  <span class="app-icon">₹</span>
+                  <span class="app-icon">B</span>
+                </div>
+              </div>
+
+              <div class="divider">
+                <span>OR</span>
+              </div>
+
+              <div class="vpa-form">
+                <label class="vpa-input-wrapper">
+                  <span class="vpa-label">Enter UPI ID</span>
+                  <input
+                    type="text"
+                    id="vpa-input"
+                    placeholder="yourname@upi"
+                    autocomplete="off"
+                  />
+                  <span class="vpa-hint">Use success@upi or fail@upi for demo</span>
+                </label>
+                <p id="payment-error" class="error hidden"></p>
+                <button id="pay-now" type="button" class="pay-button">
+                  Pay <span id="btn-amount">₹0.00</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="security-footer">
+            <div class="security-badges">
+              <span class="badge">🔐 256-bit SSL</span>
+              <span class="badge">✓ PCI DSS</span>
+              <span class="badge">🛡️ RBI Regulated</span>
+            </div>
+            <p class="disclaimer">
+              Your payment information is secure. We do not store card details.
+            </p>
+          </div>
+        </div>
+
+        <button id="cancel-payment" class="cancel-link">
+          ← Cancel and return to merchant
+        </button>
+      </main>
+
+      <footer class="gateway-footer">
+        <p>This is a sandbox payment gateway for demonstration purposes only.</p>
+        <p>No real transactions are processed.</p>
+      </footer>
+    </div>
+
+    <div id="processing-overlay" class="overlay hidden" hidden>
+      <div class="processing-card">
+        <div class="spinner"></div>
+        <h3>Processing Payment</h3>
+        <p>Please wait while we verify your transaction...</p>
+        <p class="warning">Do not close this window or press back.</p>
+      </div>
+    </div>
+
+    <div id="result-overlay" class="overlay hidden" hidden>
+      <div class="result-card">
+        <div id="result-icon" class="result-icon success">✓</div>
+        <h2 id="result-title">Payment Successful</h2>
+        <p id="result-message">Your payment has been processed.</p>
+        <div class="result-details">
+          <div class="detail-row">
+            <span>Amount</span>
+            <strong id="result-amount">₹0.00</strong>
+          </div>
+          <div class="detail-row">
+            <span>Transaction ID</span>
+            <strong id="result-txn">TXN-000000</strong>
+          </div>
+          <div class="detail-row">
+            <span>Status</span>
+            <strong id="result-status">SUCCESS</strong>
+          </div>
+        </div>
+        <p class="redirect-notice">Redirecting to merchant in <span id="countdown">5</span> seconds...</p>
+        <button id="return-now" class="return-button">Return to Merchant</button>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

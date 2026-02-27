@@ -353,15 +353,75 @@ function handleQrSimulate() {
   handlePay();
 }
 
+function redirectToGateway() {
+  const bill = getSelectedBill();
+  if (!bill || !state.consumer) return;
+
+  const paymentInfo = {
+    merchant: "KSEB",
+    merchantFull: "Kerala State Electricity Board",
+    amount: bill.billAmount,
+    description: `Bill ${bill.id} for ${state.consumer.name}`,
+    returnUrl: window.location.href.split("?")[0],
+    txnId: `KSEB-${Date.now()}`,
+    consumerId: state.consumer.consumerNumber,
+    billId: bill.id
+  };
+
+  sessionStorage.setItem("paymentInfo", JSON.stringify(paymentInfo));
+  sessionStorage.setItem("consumerState", JSON.stringify({
+    consumer: state.consumer,
+    selectedBillId: state.selectedBillId
+  }));
+  window.location.href = "../gateway/";
+}
+
+function checkPaymentResult() {
+  const resultStr = sessionStorage.getItem("paymentResult");
+  const consumerStateStr = sessionStorage.getItem("consumerState");
+
+  if (resultStr && consumerStateStr) {
+    const result = JSON.parse(resultStr);
+    const consumerState = JSON.parse(consumerStateStr);
+
+    sessionStorage.removeItem("paymentResult");
+    sessionStorage.removeItem("consumerState");
+    sessionStorage.removeItem("paymentInfo");
+
+    state.consumer = consumerState.consumer;
+    state.selectedBillId = consumerState.selectedBillId;
+
+    if (result.status === "SUCCESS") {
+      state.consumer.bills = state.consumer.bills.map((item) =>
+        item.id === state.selectedBillId ? { ...item, status: "PAID" } : item
+      );
+    }
+
+    state.paymentStatus = result;
+    elements.resultTitle.textContent =
+      result.status === "SUCCESS" ? "Payment Successful" : "Payment Failed";
+    elements.resultMessage.textContent = result.message || "";
+    elements.resultConsumer.textContent = state.consumer.consumerNumber;
+
+    const updatedBill = getSelectedBill();
+    elements.resultStatus.textContent =
+      statusLabels[updatedBill?.status] || updatedBill?.status || "";
+    elements.resultRef.textContent = result.txnId || `TXN-${Date.now().toString().slice(-6)}`;
+
+    renderBillList();
+    renderBillDetails();
+    showSection(elements.result);
+    return true;
+  }
+  return false;
+}
+
 function setupEvents() {
   elements.billForm.addEventListener("submit", handleFetchBill);
   elements.refreshCaptcha.addEventListener("click", refreshCaptcha);
   elements.newSearch.addEventListener("click", resetFlow);
   elements.resultNewSearch.addEventListener("click", resetFlow);
-  elements.payButton.addEventListener("click", () => {
-    updateGateway();
-    showSection(elements.gateway);
-  });
+  elements.payButton.addEventListener("click", redirectToGateway);
   elements.backToBill.addEventListener("click", () => showSection(elements.billView));
   elements.confirmPay.addEventListener("click", handlePay);
   elements.qrSimulate.addEventListener("click", handleQrSimulate);
@@ -376,6 +436,9 @@ function setupEvents() {
 loadConsumers().then(() => {
   refreshCaptcha();
   setupEvents();
-  showSection(elements.landing);
   elements.overlay.classList.add("hidden");
+  
+  if (!checkPaymentResult()) {
+    showSection(elements.landing);
+  }
 });

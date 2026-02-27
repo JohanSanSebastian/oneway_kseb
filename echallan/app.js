@@ -242,6 +242,59 @@ function handleQrSimulate() {
   handlePay();
 }
 
+function redirectToGateway() {
+  const challan = state.selectedChallan;
+  if (!challan) return;
+
+  const paymentInfo = {
+    merchant: "eChallan",
+    merchantFull: "Ministry of Road Transport and Highways - eChallan",
+    amount: challan.fineAmount,
+    description: `Challan ${challan.challanNumber} - ${challan.violation}`,
+    returnUrl: window.location.href.split("?")[0],
+    txnId: `ECHLLN-${Date.now()}`,
+    challanNumber: challan.challanNumber
+  };
+
+  sessionStorage.setItem("paymentInfo", JSON.stringify(paymentInfo));
+  sessionStorage.setItem("challanState", JSON.stringify({
+    selectedChallan: state.selectedChallan
+  }));
+  window.location.href = "../gateway/";
+}
+
+function checkPaymentResult() {
+  const resultStr = sessionStorage.getItem("paymentResult");
+  const challanStateStr = sessionStorage.getItem("challanState");
+
+  if (resultStr && challanStateStr) {
+    const result = JSON.parse(resultStr);
+    const challanState = JSON.parse(challanStateStr);
+
+    sessionStorage.removeItem("paymentResult");
+    sessionStorage.removeItem("challanState");
+    sessionStorage.removeItem("paymentInfo");
+
+    state.selectedChallan = challanState.selectedChallan;
+
+    if (result.status === "SUCCESS") {
+      state.selectedChallan.status = "PAID";
+    }
+
+    renderChallanDetails();
+    elements.resultTitle.textContent =
+      result.status === "SUCCESS" ? "Payment Successful" : "Payment Failed";
+    elements.resultMessage.textContent = result.message || "";
+    elements.resultChallan.textContent = state.selectedChallan.challanNumber;
+    elements.resultStatus.textContent = statusLabels[state.selectedChallan.status] || state.selectedChallan.status;
+    elements.resultRef.textContent = result.txnId || `TXN-${Date.now().toString().slice(-6)}`;
+
+    showSection(elements.resultCard);
+    return true;
+  }
+  return false;
+}
+
 async function loadChallans() {
   const response = await fetch("./data/challans.json");
   state.challans = await response.json();
@@ -261,10 +314,7 @@ function setupEvents() {
     });
   });
 
-  elements.payButton.addEventListener("click", () => {
-    updatePaymentSection();
-    showSection(elements.paymentCard);
-  });
+  elements.payButton.addEventListener("click", redirectToGateway);
 
   elements.backToChallan.addEventListener("click", () => {
     showSection(elements.challanCard);
@@ -284,5 +334,7 @@ function setupEvents() {
 loadChallans().then(() => {
   generateCaptcha();
   setupEvents();
-  showSection(elements.searchCard);
+  if (!checkPaymentResult()) {
+    showSection(elements.searchCard);
+  }
 });

@@ -228,6 +228,69 @@ function handleQrSimulate() {
   handlePay();
 }
 
+function redirectToGateway() {
+  const tax = getSelectedTax();
+  const building = state.selectedBuilding;
+  if (!tax || !building) return;
+
+  const total = tax.taxAmount + tax.penalty;
+  const paymentInfo = {
+    merchant: "K-SMART",
+    merchantFull: "Kerala Integrated Local Government Management System",
+    amount: total,
+    description: `Building Tax ${tax.id} for ${building.ownerName}`,
+    returnUrl: window.location.href.split("?")[0],
+    txnId: `KSMART-${Date.now()}`,
+    buildingId: building.buildingId,
+    taxId: tax.id
+  };
+
+  sessionStorage.setItem("paymentInfo", JSON.stringify(paymentInfo));
+  sessionStorage.setItem("buildingState", JSON.stringify({
+    selectedBuilding: state.selectedBuilding,
+    selectedTax: state.selectedTax
+  }));
+  window.location.href = "../gateway/";
+}
+
+function checkPaymentResult() {
+  const resultStr = sessionStorage.getItem("paymentResult");
+  const buildingStateStr = sessionStorage.getItem("buildingState");
+
+  if (resultStr && buildingStateStr) {
+    const result = JSON.parse(resultStr);
+    const buildingState = JSON.parse(buildingStateStr);
+
+    sessionStorage.removeItem("paymentResult");
+    sessionStorage.removeItem("buildingState");
+    sessionStorage.removeItem("paymentInfo");
+
+    state.selectedBuilding = buildingState.selectedBuilding;
+    state.selectedTax = buildingState.selectedTax;
+
+    if (result.status === "SUCCESS") {
+      state.selectedBuilding.taxes = state.selectedBuilding.taxes.map((item) =>
+        item.id === state.selectedTax.id ? { ...item, status: "PAID" } : item
+      );
+      state.selectedTax = getSelectedTax();
+    }
+
+    renderTaxSummary();
+    elements.resultTitle.textContent =
+      result.status === "SUCCESS" ? "Payment Successful" : "Payment Failed";
+    elements.resultMessage.textContent = result.message || "";
+    elements.resultBuilding.textContent = state.selectedBuilding.buildingId;
+    const updatedTax = getSelectedTax();
+    elements.resultStatus.textContent =
+      statusLabels[updatedTax?.status] || updatedTax?.status || "";
+    elements.resultRef.textContent = result.txnId || `TXN-${Date.now().toString().slice(-6)}`;
+
+    showSection(elements.resultSection, 3);
+    return true;
+  }
+  return false;
+}
+
 async function loadBuildings() {
   const response = await fetch("./data/consumers.json");
   state.buildings = await response.json();
@@ -238,10 +301,7 @@ function setupEvents() {
   elements.newSearch.addEventListener("click", resetForm);
   elements.resultNewSearch.addEventListener("click", resetForm);
 
-  elements.payButton.addEventListener("click", () => {
-    updatePaymentSection();
-    showSection(elements.paymentSection, 2);
-  });
+  elements.payButton.addEventListener("click", redirectToGateway);
 
   elements.backToTax.addEventListener("click", () => {
     showSection(elements.taxSection, 1);
@@ -270,5 +330,7 @@ function setupEvents() {
 
 loadBuildings().then(() => {
   setupEvents();
-  showSection(elements.searchSection, 0);
+  if (!checkPaymentResult()) {
+    showSection(elements.searchSection, 0);
+  }
 });

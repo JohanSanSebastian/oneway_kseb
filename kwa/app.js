@@ -222,6 +222,68 @@ function handleQrSimulate() {
   handlePay();
 }
 
+function redirectToGateway() {
+  const bill = getSelectedBill();
+  if (!bill || !state.consumer) return;
+
+  const paymentInfo = {
+    merchant: "KWA",
+    merchantFull: "Kerala Water Authority",
+    amount: bill.billAmount,
+    description: `Bill ${bill.id} for ${state.consumer.name}`,
+    returnUrl: window.location.href.split("?")[0],
+    txnId: `KWA-${Date.now()}`,
+    consumerId: state.consumer.consumerNumber,
+    billId: bill.id
+  };
+
+  sessionStorage.setItem("paymentInfo", JSON.stringify(paymentInfo));
+  sessionStorage.setItem("consumerState", JSON.stringify({
+    consumer: state.consumer,
+    selectedBillId: state.selectedBillId
+  }));
+  window.location.href = "../gateway/";
+}
+
+function checkPaymentResult() {
+  const resultStr = sessionStorage.getItem("paymentResult");
+  const consumerStateStr = sessionStorage.getItem("consumerState");
+
+  if (resultStr && consumerStateStr) {
+    const result = JSON.parse(resultStr);
+    const consumerState = JSON.parse(consumerStateStr);
+
+    sessionStorage.removeItem("paymentResult");
+    sessionStorage.removeItem("consumerState");
+    sessionStorage.removeItem("paymentInfo");
+
+    state.consumer = consumerState.consumer;
+    state.selectedBillId = consumerState.selectedBillId;
+
+    if (result.status === "SUCCESS") {
+      state.consumer.bills = state.consumer.bills.map((item) =>
+        item.id === state.selectedBillId ? { ...item, status: "PAID" } : item
+      );
+    }
+
+    renderBill();
+    elements.billCard.classList.remove("hidden");
+    elements.resultTitle.textContent =
+      result.status === "SUCCESS" ? "Payment Successful" : "Payment Failed";
+    elements.resultMessage.textContent = result.message || "";
+    elements.resultConsumer.textContent = state.consumer.consumerNumber;
+    const updatedBill = getSelectedBill();
+    elements.resultStatus.textContent =
+      statusLabels[updatedBill?.status] || updatedBill?.status || "";
+    elements.resultRef.textContent = result.txnId || `TXN-${Date.now().toString().slice(-6)}`;
+
+    elements.result.classList.remove("hidden");
+    elements.gateway.classList.add("hidden");
+    return true;
+  }
+  return false;
+}
+
 async function loadConsumers() {
   const response = await fetch("./data/consumers.json");
   state.consumers = await response.json();
@@ -234,7 +296,7 @@ loadConsumers().then(() => {
   elements.form.addEventListener("submit", handleSubmit);
   elements.reset.addEventListener("click", resetForm);
   elements.newSearch.addEventListener("click", resetForm);
-  elements.payButton.addEventListener("click", showGateway);
+  elements.payButton.addEventListener("click", redirectToGateway);
   elements.backToBill.addEventListener("click", () => {
     elements.gateway.classList.add("hidden");
   });
@@ -247,4 +309,6 @@ loadConsumers().then(() => {
       handleQrSimulate();
     }
   });
+
+  checkPaymentResult();
 });
