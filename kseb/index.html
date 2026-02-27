@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KSEB Quick Pay Sandbox</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <div class="top-bar">
+          <div class="logo">
+            <div class="logo-mark">KSEB</div>
+            <div>
+              <strong>Kerala State Electricity Board</strong>
+              <span>Quick Pay Sandbox</span>
+            </div>
+          </div>
+          <div class="contact">
+            <span class="whatsapp">Chat on WhatsApp</span>
+            <span class="helpline">1912 / 0471-2555544</span>
+          </div>
+        </div>
+        <nav class="nav-bar">
+          <span>HOME</span>
+          <span>QUICK PAY</span>
+          <span>REGISTER COMPLAINT / SERVICE</span>
+          <span>ONLINE SERVICES</span>
+          <span>CONTACT</span>
+        </nav>
+        <div class="cta-row">
+          <span class="cta">CONSUMER SIGN IN -></span>
+        </div>
+        <div class="quickpay-bar">
+          <span>Quick Pay</span>
+          <span class="chevrons">>></span>
+        </div>
+      </header>
+
+      <main class="card">
+        <section id="landing" class="stack">
+          <div class="section-header">
+            <span class="section-icon">[DOC]</span>
+            <h2>Consumer Details</h2>
+          </div>
+
+          <form id="bill-form" class="stack">
+            <div class="grid">
+              <label>
+                Consumer Number <span class="required">*</span>
+                <span class="help-icon">?</span>
+                <input
+                  id="consumerNumber"
+                  name="consumerNumber"
+                  maxlength="13"
+                  placeholder="13 digit Consumer number"
+                />
+              </label>
+              <label>
+                Section Office <span class="required">*</span>
+                <span class="help-icon">?</span>
+                <select id="section" name="section">
+                  <option value="">Select Section</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="captcha">
+              <div id="captcha-image" class="captcha-image"></div>
+              <div class="captcha-inputs">
+                <label>
+                  Enter Captcha <span class="required">*</span>
+                  <input
+                    id="captchaValue"
+                    name="captchaValue"
+                    placeholder="Type the text shown"
+                  />
+                </label>
+                <button type="button" id="refresh-captcha" class="ghost">
+                  Refresh
+                </button>
+              </div>
+            </div>
+
+            <p id="landing-error" class="error hidden"></p>
+
+            <button type="submit" class="primary center">
+              Submit to see the bill
+            </button>
+
+            <div class="info-box">
+              <span class="info-icon">i</span>
+              Please register if you are not registered for online services.
+            </div>
+
+            <div class="conditions">
+              <div class="conditions-title">Conditions</div>
+              <ul>
+                <li>Payment confirmation will be available instantly.</li>
+                <li>Keep the receipt for future reference.</li>
+                <li>For issues, contact the helpline.</li>
+              </ul>
+            </div>
+          </form>
+        </section>
+
+        <section id="bill-view" class="stack hidden">
+          <div class="bill-header">
+            <div>
+              <p class="eyebrow">Consumer Summary</p>
+              <h2 id="consumer-name"></h2>
+              <p id="consumer-address" class="muted"></p>
+            </div>
+            <div id="bill-status" class="status"></div>
+          </div>
+
+          <div id="bill-list" class="bill-list"></div>
+
+          <div id="bill-details" class="details"></div>
+
+          <div id="paid-banner" class="paid-banner hidden">
+            This bill is already paid. You can search another consumer.
+          </div>
+
+          <div class="bill-actions">
+            <button id="pay-button" class="primary">Pay via UPI</button>
+            <button id="new-search" class="ghost">Start New Search</button>
+          </div>
+        </section>
+
+        <section id="gateway" class="stack hidden">
+          <div class="bill-header">
+            <div>
+              <p class="eyebrow">Mock UPI Gateway</p>
+              <h2 id="gateway-amount"></h2>
+              <p class="muted">Complete payment to KSEB Utilities</p>
+            </div>
+            <div class="status pending">Processing Sandbox</div>
+          </div>
+
+          <div class="gateway">
+            <div class="qr">
+              <img class="qr-image" src="./upi-qr.png" alt="UPI QR" />
+              <p id="qr-label" class="muted"></p>
+            </div>
+            <div class="gateway-form">
+              <label>
+                Enter UPI ID
+                <input id="vpa" placeholder="success@upi or fail@upi" />
+              </label>
+              <p id="gateway-error" class="error hidden"></p>
+              <button id="confirm-pay" class="primary">Confirm Payment</button>
+              <button id="back-to-bill" class="ghost">Back to Bill</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="result" class="stack hidden">
+          <div class="result">
+            <h2 id="result-title"></h2>
+            <p id="result-message"></p>
+          </div>
+          <div class="details">
+            <div>
+              <span>Consumer Number</span>
+              <strong id="result-consumer"></strong>
+            </div>
+            <div>
+              <span>Bill Status</span>
+              <strong id="result-status"></strong>
+            </div>
+            <div>
+              <span>Payment Method</span>
+              <strong>UPI Sandbox</strong>
+            </div>
+            <div>
+              <span>Reference</span>
+              <strong id="result-ref"></strong>
+            </div>
+          </div>
+          <button id="result-new-search" class="primary">Start New Search</button>
+        </section>
+      </main>
+
+      <div id="overlay" class="overlay hidden">
+        <div class="loader">
+          <div class="spinner"></div>
+          <p>Processing UPI transaction...</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

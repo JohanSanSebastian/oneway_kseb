@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KWA Online Services</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="kwa-page">
+      <header class="kwa-header">
+        <div class="brand">
+          <div class="logo-mark">KWA</div>
+          <span>KWA Online Services</span>
+        </div>
+        <nav>
+          <a>Water Charge</a>
+          <a>Service Charge</a>
+          <a>New Connection</a>
+          <a>Feedback</a>
+        </nav>
+      </header>
+
+      <h1 class="page-title">Water Charge</h1>
+
+      <div class="card-grid">
+        <section class="card">
+          <div class="card-header">
+            <div class="icon">Q</div>
+            <div>
+              <h2>View Bill</h2>
+              <p>Search using Consumer ID or Phone Number.</p>
+            </div>
+          </div>
+
+          <form id="kwa-form" class="form-stack">
+            <label class="material-input">
+              <span>Consumer ID</span>
+              <input id="consumerNumber" name="consumerNumber" />
+              <small>Eg: 2342678940</small>
+            </label>
+
+            <div class="or-divider">
+              <span>OR</span>
+            </div>
+
+            <label class="material-input">
+              <span>Phone Number</span>
+              <input id="phone" name="phone" />
+              <small>Eg: 9876543210</small>
+              <a class="action-link">Register phone</a>
+            </label>
+
+            <p id="kwa-error" class="error hidden"></p>
+
+            <div class="button-row">
+              <button id="proceed" type="submit" class="proceed" disabled>
+                Proceed
+              </button>
+              <button id="reset" type="button" class="reset">Reset</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div class="icon">I</div>
+            <div>
+              <h2>Incentive Details</h2>
+              <p>Save more with timely payments and digital receipts.</p>
+            </div>
+          </div>
+          <ul class="bullet-list">
+            <li>Digital receipts are available instantly after payment.</li>
+            <li>Eligible users receive billing reminders by SMS.</li>
+            <li>Pay before the due date to avoid penalties.</li>
+          </ul>
+        </section>
+
+        <section id="bill-card" class="card hidden">
+          <div class="card-header">
+            <div class="icon">B</div>
+            <div>
+              <h2>Bill Summary</h2>
+              <p>Latest bill details for the selected account.</p>
+            </div>
+          </div>
+          <div class="bill-summary">
+            <div>
+              <span>Consumer</span>
+              <strong id="bill-name"></strong>
+            </div>
+            <div>
+              <span>Consumer Number</span>
+              <strong id="bill-number"></strong>
+            </div>
+            <div>
+              <span>Amount</span>
+              <strong id="bill-amount"></strong>
+            </div>
+            <div>
+              <span>Due Date</span>
+              <strong id="bill-date"></strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong id="bill-status"></strong>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
