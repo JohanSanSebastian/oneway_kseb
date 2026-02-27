@@ -3,7 +3,8 @@ const state = {
   consumer: null,
   consumers: [],
   selectedBillId: "",
-  paymentStatus: null
+  paymentStatus: null,
+  isProcessing: false
 };
 
 const statusLabels = {
@@ -60,6 +61,12 @@ function showSection(section) {
   elements.gateway.classList.add("hidden");
   elements.result.classList.add("hidden");
   section.classList.remove("hidden");
+  setOverlayVisible(false);
+}
+
+function setOverlayVisible(isVisible) {
+  state.isProcessing = Boolean(isVisible);
+  elements.overlay.classList.toggle("hidden", !state.isProcessing);
 }
 
 function showError(element, message) {
@@ -304,7 +311,7 @@ async function handlePay() {
     return;
   }
 
-  elements.overlay.classList.remove("hidden");
+  setOverlayVisible(true);
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
   const isFailure = vpa.toLowerCase().includes("fail");
@@ -314,7 +321,7 @@ async function handlePay() {
     ? { status: "SUCCESS", message: "Payment captured. Your bill is marked as paid." }
     : { status: "FAILURE", message: "UPI authorization failed. Please try again." };
 
-  elements.overlay.classList.add("hidden");
+  setOverlayVisible(false);
 
   if (data.status === "SUCCESS") {
     state.consumer.bills = state.consumer.bills.map((item) =>
@@ -354,4 +361,6 @@ function setupEvents() {
 loadConsumers().then(() => {
   refreshCaptcha();
   setupEvents();
+  showSection(elements.landing);
+  elements.overlay.classList.add("hidden");
 });
