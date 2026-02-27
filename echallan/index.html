@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eChallan - Digital Traffic/Transport Enforcement Solution</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="echallan-page">
+      <header class="main-header">
+        <div class="header-top">
+          <div class="branding">
+            <div class="emblem">
+              <svg viewBox="0 0 40 50" aria-label="State Emblem of India">
+                <circle cx="20" cy="15" r="12" fill="#1a1a1a" />
+                <rect x="12" y="25" width="16" height="4" fill="#1a1a1a" />
+                <rect x="8" y="28" width="24" height="3" fill="#1a1a1a" />
+                <rect x="14" y="30" width="12" height="8" fill="#1a1a1a" />
+                <rect x="6" y="37" width="28" height="4" rx="1" fill="#1a1a1a" />
+              </svg>
+            </div>
+            <div class="title-block">
+              <h1><strong>eChallan</strong> - Digital Traffic/Transport Enforcement Solution</h1>
+              <p>Ministry of Road Transport and Highways, Government of India</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="btn-grievance">Grievance</button>
+            <button class="btn-pay-online">Pay Online</button>
+          </div>
+        </div>
+        <nav class="nav-bar">
+          <a href="#">Home</a>
+          <span class="divider">|</span>
+          <a href="#">About</a>
+          <span class="divider">|</span>
+          <a href="#">Contact</a>
+          <span class="divider">|</span>
+          <a href="#">Help</a>
+          <span class="divider">|</span>
+          <a href="#">FAQs</a>
+        </nav>
+        <div class="alert-banner">
+          <strong>Important Notice:</strong> Beware of fraudulent websites. Only use official echallan.parivahan.gov.in portal for payments.
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="dual-cards">
+          <section class="notice-card">
+            <h2>Notice Board</h2>
+            <ul class="notice-list">
+              <li><span class="arrow">›</span> <a href="#">Check Pending Transaction</a></li>
+              <li><span class="arrow">›</span> <a href="#">How to Pay Challan Online</a></li>
+              <li><span class="arrow">›</span> <a href="#">Traffic Rules & Penalties</a></li>
+              <li><span class="arrow">›</span> <a href="#">State Wise Helplines</a></li>
+              <li><span class="arrow">›</span> <a href="#" class="highlight">Download Receipt</a></li>
+              <li><span class="arrow">›</span> <a href="#">Lodge Virtual Court Case</a></li>
+            </ul>
+          </section>
+
+          <section id="search-card" class="challan-card">
+            <h2>Check Challan Status</h2>
+            <p class="subtitle">Enter details to view your pending challans</p>
+
+            <form id="search-form">
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="searchType" value="challan" checked />
+                  <span class="radio-custom"></span>
+                  <span class="radio-label">Challan Number</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="searchType" value="vehicle" />
+                  <span class="radio-custom"></span>
+                  <span class="radio-label">Vehicle Number</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="searchType" value="dl" />
+                  <span class="radio-custom"></span>
+                  <span class="radio-label">DL Number</span>
+                </label>
+              </div>
+
+              <div class="underline-input">
+                <label id="search-label" for="searchValue">Challan Number</label>
+                <input id="searchValue" name="searchValue" type="text" placeholder="Enter Challan Number" />
+              </div>
+
+              <div class="captcha-row">
+                <div class="captcha-box">
+                  <span id="captcha-text"></span>
+                </div>
+                <button type="button" id="refresh-captcha" class="refresh-btn" aria-label="Refresh captcha">↻</button>
+                <div class="underline-input captcha-input">
+                  <label for="captchaValue">Enter Captcha</label>
+                  <input id="captchaValue" name="captchaValue" type="text" placeholder="Type here" />
+                </div>
+              </div>
+
+              <p id="search-error" class="error hidden"></p>
+
+              <button type="submit" class="btn-get-detail">GET DETAIL</button>
+            </form>
+          </section>
+
+          <section id="challan-card" class="challan-card hidden">
+            <h2>Challan Details</h2>
+            <p class="subtitle">Violation information and payment options</p>
+
+            <div class="challan-info">
+              <div class="info-row">
+                <span>Challan No.</span>
+                <strong id="display-challan-no"></strong>
+              </div>
+              <div class="info-row">
+                <span>Vehicle No.</span>
+                <strong id="display-vehicle-no"></strong>
+              </div>
+              <div class="info-row">
+                <span>Owner Name</span>
+                <strong id="display-owner"></strong>
+              </div>
+              <div class="info-row">
+                <span>Violation</span>
+                <strong id="display-violation"></strong>
+              </div>
+              <div class="info-row">
+                <span>Date & Time</span>
+                <strong id="display-datetime"></strong>
+              </div>
+              <div class="info-row">
+                <span>Location</span>
+                <strong id="display-location"></strong>
+              </div>
+              <div class="info-row highlight-row">
+                <span>Fine Amount</span>
+                <strong id="display-fine"></strong>
+              </div>
+              <div class="info-row">
+                <span>Status</span>
+                <strong id="display-status" class="status-badge"></strong>
+              </div>
+            </div>
+
+            <div id="paid-banner" class="paid-banner hidden">
+              This challan has been paid. No action required.
+            </div>
+
+            <div class="action-row">
+              <button id="pay-button" type="button" class="btn-get-detail">Pay via UPI</button>
+              <button id="new-search" type="button" class="btn-secondary">New Search</button>
+            </div>
+          </section>
+
+          <section id="payment-card" class="challan-card wide hidden">
+            <h2>UPI Payment Gateway</h2>
+            <p class="subtitle" id="payment-amount"></p>
+
+            <div class="payment-grid">
+              <div
+                id="qr-simulate"
+                class="qr-area"
+                role="button"
+                tabindex="0"
+                aria-label="Simulate UPI QR scan"
+              >
+                <svg
+                  class="qr-image"
+                  viewBox="0 0 120 120"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <rect width="120" height="120" fill="#ffffff" />
+                  <rect x="8" y="8" width="28" height="28" fill="#2D60B3" />
+                  <rect x="84" y="8" width="28" height="28" fill="#2D60B3" />
+                  <rect x="8" y="84" width="28" height="28" fill="#2D60B3" />
+                  <rect x="18" y="18" width="8" height="8" fill="#ffffff" />
+                  <rect x="94" y="18" width="8" height="8" fill="#ffffff" />
+                  <rect x="18" y="94" width="8" height="8" fill="#ffffff" />
+                  <rect x="46" y="16" width="8" height="8" fill="#2D60B3" />
+                  <rect x="60" y="26" width="8" height="8" fill="#2D60B3" />
+                  <rect x="46" y="38" width="10" height="10" fill="#2D60B3" />
+                  <rect x="64" y="48" width="10" height="10" fill="#2D60B3" />
+                  <rect x="38" y="60" width="8" height="8" fill="#2D60B3" />
+                  <rect x="52" y="70" width="12" height="12" fill="#2D60B3" />
+                  <rect x="72" y="66" width="8" height="8" fill="#2D60B3" />
+                  <rect x="60" y="90" width="10" height="10" fill="#2D60B3" />
+                  <rect x="78" y="86" width="6" height="6" fill="#2D60B3" />
+                </svg>
+                <p id="qr-label" class="qr-label"></p>
+                <span class="scan-hint">Tap QR to simulate payment</span>
+              </div>
+
+              <div class="upi-form">
+                <div class="underline-input">
+                  <label for="vpa">UPI ID</label>
+                  <input id="vpa" name="vpa" type="text" placeholder="success@upi or fail@upi" />
+                </div>
+                <p id="payment-error" class="error hidden"></p>
+                <div class="action-row">
+                  <button id="confirm-pay" type="button" class="btn-get-detail">Confirm Payment</button>
+                  <button id="back-to-challan" type="button" class="btn-secondary">Back</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="result-card" class="challan-card wide hidden">
+            <div class="result-box">
+              <h2 id="result-title"></h2>
+              <p id="result-message"></p>
+            </div>
+
+            <div class="result-details">
+              <div class="info-row">
+                <span>Challan No.</span>
+                <strong id="result-challan"></strong>
+              </div>
+              <div class="info-row">
+                <span>Status</span>
+                <strong id="result-status"></strong>
+              </div>
+              <div class="info-row">
+                <span>Payment Method</span>
+                <strong>UPI Sandbox</strong>
+              </div>
+              <div class="info-row">
+                <span>Transaction Ref</span>
+                <strong id="result-ref"></strong>
+              </div>
+            </div>
+
+            <button id="result-new-search" type="button" class="btn-get-detail">New Search</button>
+          </section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p>© 2026 Ministry of Road Transport and Highways, Government of India. All Rights Reserved.</p>
+        <p>This is a sandbox/demo environment for testing purposes only.</p>
+      </footer>
+    </div>
+
+    <div id="overlay" class="overlay hidden" hidden>
+      <div class="loader">
+        <div class="spinner"></div>
+        <p>Processing UPI transaction...</p>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

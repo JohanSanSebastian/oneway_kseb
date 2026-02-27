@@ -1,0 +1,68 @@
+[
+  {
+    "challanNumber": "CH2026001234",
+    "vehicleNumber": "KL01AB1234",
+    "dlNumber": "KL0120210012345",
+    "ownerName": "Rajesh Kumar",
+    "violation": "Over Speeding - 80 km/h in 50 km/h zone",
+    "dateTime": "15-Feb-2026, 14:32",
+    "location": "NH66, Ernakulam Bypass, Kerala",
+    "fineAmount": 2000,
+    "status": "PENDING"
+  },
+  {
+    "challanNumber": "CH2026001235",
+    "vehicleNumber": "KL07CD5678",
+    "dlNumber": "KL0720190087654",
+    "ownerName": "Priya Menon",
+    "violation": "Red Light Jump",
+    "dateTime": "18-Feb-2026, 09:15",
+    "location": "MG Road Signal, Thiruvananthapuram",
+    "fineAmount": 5000,
+    "status": "PENDING"
+  },
+  {
+    "challanNumber": "CH2026001236",
+    "vehicleNumber": "KL10EF9012",
+    "dlNumber": "KL1020180054321",
+    "ownerName": "Mohammed Ashraf",
+    "violation": "Driving without Helmet",
+    "dateTime": "20-Feb-2026, 17:45",
+    "location": "Beach Road, Kozhikode",
+    "fineAmount": 1000,
+    "status": "PENDING"
+  },
+  {
+    "challanNumber": "CH2026001237",
+    "vehicleNumber": "KL05GH3456",
+    "dlNumber": "KL0520200098765",
+    "ownerName": "Lakshmi Nair",
+    "violation": "Using Mobile Phone while Driving",
+    "dateTime": "22-Feb-2026, 11:20",
+    "location": "Palarivattom Junction, Kochi",
+    "fineAmount": 5000,
+    "status": "PAID"
+  },
+  {
+    "challanNumber": "CH2026001238",
+    "vehicleNumber": "KL14JK7890",
+    "dlNumber": "KL1420170023456",
+    "ownerName": "George Thomas",
+    "violation": "Driving without Seatbelt",
+    "dateTime": "25-Feb-2026, 08:55",
+    "location": "Vytilla Flyover, Ernakulam",
+    "fineAmount": 1000,
+    "status": "PENDING"
+  },
+  {
+    "challanNumber": "CH2026001239",
+    "vehicleNumber": "KL09LM2345",
+    "dlNumber": "KL0920220045678",
+    "ownerName": "Arun Krishnan",
+    "violation": "Triple Riding on Two-Wheeler",
+    "dateTime": "26-Feb-2026, 16:10",
+    "location": "Swaraj Round, Thrissur",
+    "fineAmount": 2000,
+    "status": "PENDING"
+  }
+]
